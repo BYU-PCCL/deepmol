@@ -27,7 +27,8 @@ def conv( x, filter_size=8, stride=2, num_filters=64, is_output=False, name="con
         conv = tf.nn.conv2d( x, W, [1, stride, stride, 1], padding="SAME" )
         out = tf.nn.bias_add(conv, b)
         if not is_output:
-            out = tf.contrib.layers.batch_norm( tf.nn.relu(out) )
+#            out = tf.contrib.layers.batch_norm( tf.nn.relu(out) )
+            out = tf.nn.relu(out)
 
     return out
 
@@ -49,7 +50,8 @@ def convt( x, out_shape, filter_size=8, stride=2, is_output=False, name="convt" 
         conv = tf.nn.conv2d_transpose( x, W, out_shape, [1, stride, stride, 1], padding="SAME" )
         out = tf.nn.bias_add( conv, b )
         if not is_output:
-            out = tf.contrib.layers.batch_norm( tf.nn.relu(out) )
+#            out = tf.contrib.layers.batch_norm( tf.nn.relu(out) )
+            out = tf.nn.relu(out)
 
     return out
 
@@ -69,7 +71,8 @@ def fc( x, out_size=50, is_output=False, name="fc" ):
         out = tf.matmul(x, W) + b
 
         if not is_output:
-            out = tf.contrib.layers.batch_norm( tf.nn.relu( out ) )
+#            out = tf.contrib.layers.batch_norm( tf.nn.relu( out ) )
+            out = tf.nn.relu( out )
 
     return out
 

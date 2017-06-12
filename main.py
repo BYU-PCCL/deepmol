@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 from model import model
 
+from augment import jitter_image
 from data import *
 from losses import *
 
@@ -57,8 +58,10 @@ best = 100000000
 for iter in range( 1000000 ):
 
     inds = np.random.choice( train_inputs.shape[0], size=[BATCHSIZE] )
+    train_images = np.squeeze(train_inputs[inds,:,:,:])
+    train_images = np.expand_dims([jitter_image(image) for image in train_images], 3)
 
-    _, opt_val, loss_val = sess.run( [optim,loss,l2rmse], feed_dict={input_ph:train_inputs[inds,:,:,:], output_ph:train_outputs[inds,0:1]} )
+    _, opt_val, loss_val = sess.run( [optim,loss,l2rmse], feed_dict={input_ph:train_images, output_ph:train_outputs[inds,0:1]} )
 
     if iter % 30==0:
 
@@ -70,6 +73,6 @@ for iter in range( 1000000 ):
         results.append( [ tst_l1, tst_l2rmse, tr_l1, tr_l2rmse ] )
         np.save( 'results.npy', results )
 
-#      if loss_val < best:
-#          saver.save( sess, './model.ckpt' )
-#          best = loss_val
+    if loss_val < best:
+        saver.save( sess, './model.ckpt' )
+        best = loss_val
